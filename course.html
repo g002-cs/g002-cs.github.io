@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課程輸入</title>
+  <style>
+  body { margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    /* 上方選單 */
+    .navbar {
+      background-color: #A7D7A7; /* 淡綠色 */
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    .navbar img {
+      width: 40px;
+      height: 40px;
+      margin-right: 20px;
+    }
+ .navbar a:last-child {
+    margin-right: 1; /* 最後一個不需要右邊距 */
+  }
+  .navbar a:first-child {
+    margin-right:50px; 
+  }
+
+    .navbar a {
+      text-decoration: none;
+      color: black;
+      margin-right: 100px;
+      font-weight: bold;
+    }
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+
+
+
+    /* 左側箭頭 */
+    .left-arrow {
+      display: inline-block;
+      background-color: #A7D7A7;
+      padding: 15px 25px;
+      clip-path: polygon(0 50%, 20% 0, 100% 0, 100% 100%, 20% 100%);
+      font-size: 18px;
+      color: black;
+      margin: 40px 0 20px 40px;
+    }
+
+    /* 按鈕 */
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+
+    .course-button {
+      width: 200px;
+      padding: 20px;
+      margin: 15px 0;
+      background-color: #A7D7A7;
+      border: none;
+      border-radius: 5px;
+      font-size: 22px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .course-button:hover {
+      background-color: #90c790;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 上方選單 -->
+  <div class="navbar">
+    <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink" href="#">系統介紹</a>
+    <a id="requiredLink" href="#">必修科目表</a>
+    <a id="courseLink" href="#">課程輸入</a>
+    <a id="creditsLink" href="#">學分計算</a>
+  </div>
+
+  <!-- 左側箭頭 -->
+  <div class="left-arrow">課程輸入</div>
+
+  <!-- 三個大按鈕 -->
+  <div class="button-container">
+    <button class="course-button" id="requiredCourseBtn">必修</button>
+    <button class="course-button" id="electiveCourseBtn">選修</button>
+    <button class="course-button" id="generalCourseBtn">通識</button>
+  </div>
+
+  <script>
+    // 取得 URL 參數
+    const params = new URLSearchParams(window.location.search);
+    const studentId = params.get('studentId');
+    const group = params.get('group');
+
+    // 動態帶參數
+    function withParams(page) {
+      return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}`;
+    }
+
+    document.getElementById('homeLink').href = withParams('login.html');
+    document.getElementById('introLink').href = withParams('page2.html');
+    document.getElementById('requiredLink').href = withParams('required.html');
+    document.getElementById('courseLink').href = withParams('course.html');
+    document.getElementById('creditsLink').href = withParams('credits.html');
+
+    // 三個按鈕導向不同頁面
+    document.getElementById('requiredCourseBtn').addEventListener('click', () => {
+      window.location.href = withParams('required-course.html'); // 這裡放你的必修課程頁面檔名
+    });
+    document.getElementById('electiveCourseBtn').addEventListener('click', () => {
+      window.location.href = withParams('elective-course.html'); // 這裡放你的選修課程頁面檔名
+    });
+    document.getElementById('generalCourseBtn').addEventListener('click', () => {
+      window.location.href = withParams('general-course.html'); // 這裡放你的通識課程頁面檔名
+    });
+  </script>
+
+</body>
+</html>

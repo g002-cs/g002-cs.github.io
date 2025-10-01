@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>選修課程輸入</title>
+<style>
+   body { margin: 0; font-family: Arial, sans-serif; background-color: #fff; }
+  .navbar { background-color: #A7D7A7; display: flex; align-items: center; padding: 10px 20px; }
+  .navbar img { width: 40px; height: 40px; margin-right: 20px; }
+  .navbar a { text-decoration: none; color: black; margin-right: 100px; font-weight: bold; }
+  .navbar a:hover { text-decoration: underline; }
+ .navbar a:last-child {
+    margin-right: 1; /* 最後一個不需要右邊距 */
+  }
+  .navbar a:first-child {
+    margin-right:50px; 
+  }
+
+
+  .left-arrow { display: inline-block; background-color: #A7D7A7; padding: 15px 25px;
+    clip-path: polygon(0 50%, 20% 0, 100% 0, 100% 100%, 20% 100%);
+    font-size: 18px; color: black; margin: 20px 0 20px 40px; }
+
+  .content { margin: 20px 40px; }
+
+  .filters { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+  select { padding: 10px 15px; background-color: #A7D7A7; border: none; border-radius: 5px; font-size: 16px; }
+
+  .main-area { display: flex; justify-content: space-between; }
+  .course-list { width: 50%; background-color: #f5f5f5; padding: 20px; border-radius: 8px; }
+  .course-list h3 { margin-bottom: 10px; }
+
+  .input-area { display: flex; flex-direction: column; gap: 15px; }
+  label { font-size: 16px; }
+  input { padding: 10px; font-size: 16px; border: none; background-color: #ddd; border-radius: 5px; }
+  button { background-color: #A7D7A7; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; }
+  button:hover { background-color: #8FCB8F; }
+
+  #courseList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+
+#courseList li button {
+  background-color: #ff7f7f;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+#courseList li button:hover {
+  background-color: #ff4c4c;
+}
+</style>
+</head>
+<body>
+
+<!-- 上方選單 -->
+<div class="navbar">
+  <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+  <a id="introLink" href="#">系統介紹</a>
+  <a id="requiredLink" href="#">必修科目表</a>
+  <a id="courseLink" href="#">課程輸入</a>
+  <a id="creditsLink" href="#">學分計算</a>
+</div>
+
+<!-- 左側箭頭 -->
+<div class="left-arrow">選修課程輸入</div>
+
+<!-- 內容 -->
+<div class="content">
+  <!-- 下拉選單 -->
+  <div class="filters">
+    <label for="typeSelect">單/選/通：</label>
+    <select id="typeSelect">
+      <option value="必修">必修</option>
+      <option value="選修" selected>選修</option>
+      <option value="通識">通識</option>
+    </select>
+
+    <label for="categorySelect">科目分類：</label>
+    <select id="categorySelect">
+      <option value="系內選修">系內選修</option>
+      <option value="系外選修">系外選修</option>
+    </select>
+  </div>
+
+  <!-- 主區塊 -->
+  <div class="main-area">
+    <!-- 已輸入課程清單 -->
+    <div class="course-list">
+      <h3>（已輸入課程顯示區）</h3>
+      <ol id="courseList"></ol>
+    </div>
+
+    <!-- 輸入區 -->
+    <div class="input-area">
+      <label>科目名稱：<input type="text" id="courseName" placeholder="自行輸入"></label>
+      <label>學分：<input type="number" id="courseCredits" placeholder="自行輸入"></label>
+      <button onclick="addCourse()">確定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 取得 URL 參數
+  const params = new URLSearchParams(window.location.search);
+  const studentId = params.get('studentId');
+  const group = params.get('group');
+  const allowedGroups = ['行銷與數位經營組','服務創新與創業組','尚未分組'];
+  if (!studentId || !allowedGroups.includes(group)) {
+    window.location.href = 'login.html';
+  }
+  function withParams(page) {
+    return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}`;
+  }
+
+  // 導覽列連結帶參數
+  document.getElementById('homeLink').href = withParams('login.html');
+  document.getElementById('introLink').href = withParams('page2.html');
+  document.getElementById('requiredLink').href = withParams('required.html');
+  document.getElementById('courseLink').href = withParams('course.html');
+  document.getElementById('creditsLink').href = withParams('credits.html');
+
+  // DOM 元素
+  const courseListEl = document.getElementById('courseList');
+  const nameInput = document.getElementById('courseName');
+  const creditsInput = document.getElementById('courseCredits');
+  const categorySelect = document.getElementById('categorySelect');
+
+  // localStorage key 以 studentId 為主
+  const storageKey = `elective_courses_${studentId}`;
+
+  // 從 localStorage 載入課程
+  function loadCourses() {
+    const data = localStorage.getItem(storageKey);
+    courseListEl.innerHTML = '';
+    if (data) {
+      const courses = JSON.parse(data);
+      courses.forEach((c, index) => {
+        addCourseToDOM(c.name, c.credits, c.category, index);
+      });
+    }
+  }
+
+  // 儲存課程到 localStorage
+  function saveCourses() {
+    const items = [];
+    courseListEl.querySelectorAll('li').forEach(li => {
+      const name = li.dataset.name;
+      const credits = li.dataset.credits;
+      const category = li.dataset.category;
+      items.push({ name, credits, category });
+    });
+    localStorage.setItem(storageKey, JSON.stringify(items));
+  }
+
+  // 在頁面上新增課程項目
+  function addCourseToDOM(name, credits, category, index) {
+    const li = document.createElement('li');
+    li.dataset.name = name;
+    li.dataset.credits = credits;
+    li.dataset.category = category;
+
+    // 左邊文字：加上分類
+    const spanText = document.createElement('span');
+    spanText.textContent = `[${category}] ${name}　${credits}學分`;
+
+    // 右邊刪除按鈕
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '刪除';
+    delBtn.onclick = () => {
+      li.remove();
+      saveCourses();
+    };
+
+    li.appendChild(spanText);
+    li.appendChild(delBtn);
+    courseListEl.appendChild(li);
+  }
+
+  // 新增課程到清單並儲存
+  function addCourse() {
+    const name = nameInput.value.trim();
+    const credits = creditsInput.value.trim();
+    const category = categorySelect.value; // 系內選修 / 系外選修
+    if (!name || !credits) { alert('請輸入課程名稱和學分'); return; }
+    addCourseToDOM(name, credits, category);
+    nameInput.value = '';
+    creditsInput.value = '';
+    saveCourses();
+  }
+  window.addCourse = addCourse; // 維持 HTML 按鈕 onclick 可用
+
+  // 初始載入
+  loadCourses();
+
+  // 下拉式切換 → 跳轉
+  document.getElementById('typeSelect').addEventListener('change', function() {
+    const value = this.value;
+    if (value === '必修') window.location.href = withParams('required-course.html');
+    if (value === '選修') window.location.href = withParams('elective-course.html');
+    if (value === '通識') window.location.href = withParams('general-course.html');
+  });
+</script>
+
+
+
+</body>
+</html>

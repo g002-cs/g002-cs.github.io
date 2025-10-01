@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>學分計算</title>
+<style>
+       body { margin: 0; font-family: Arial, sans-serif; background-color: #fff; }
+  .navbar { background-color: #A7D7A7; display: flex; align-items: center; padding: 10px 20px; }
+  .navbar img { width: 40px; height: 40px; margin-right: 20px; }
+  .navbar a { text-decoration: none; color: black; margin-right: 100px; font-weight: bold; }
+  .navbar a:hover { text-decoration: underline; }
+ .navbar a:last-child {
+    margin-right: 1; /* 最後一個不需要右邊距 */
+  }
+  .navbar a:first-child {
+    margin-right:50px; 
+  }
+
+  .left-arrow { display: inline-block; background-color: #A7D7A7; padding: 15px 25px;
+    clip-path: polygon(0 50%, 20% 0, 100% 0, 100% 100%, 20% 100%); font-size: 18px; color: black; margin: 20px 0 20px 40px; }
+
+
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border-bottom: 1px solid #ccc; padding: 15px; text-align: center; font-size: 16px; }
+  th { background-color: #b9D9B7; }
+</style>
+</head>
+<body>
+
+<script>
+  // URL 參數檢查
+  const params = new URLSearchParams(window.location.search);
+  const studentId = params.get('studentId');
+  const group = params.get('group');
+  const allowedGroups = ['行銷與數位經營組','服務創新與創業組','尚未分組'];
+  if (!studentId || !allowedGroups.includes(group)) {
+    window.location.href = 'login.html';
+  }
+  function withParams(page) {
+    return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}`;
+  }
+</script>
+
+<!-- 上方選單 -->
+<div class="navbar">
+  <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+  <a id="introLink" href="#">系統介紹</a>
+  <a id="requiredLink" href="#">必修科目表</a>
+  <a id="courseLink" href="#">課程輸入</a>
+  <a id="creditsLink" href="#">學分計算</a>
+</div>
+
+<!-- 左側箭頭 -->
+<div class="left-arrow">學分計算</div>
+
+<!-- 內容 -->
+<div class="content" style="margin:20px 40px;">
+  <!-- 學號顯示 -->
+  <div style="margin-bottom: 20px; font-size:18px;">
+    學號：<span id="studentId" style="font-weight:bold;">SXXXXXXXX</span>
+  </div>
+
+  <!-- 學分表格 -->
+  <table>
+    <thead>
+      <tr style="background-color:#00A060; color:black;">
+        <th>科目類別</th>
+        <th>應修學分</th>
+        <th>已修學分</th>
+        <th>未修學分</th>
+      </tr>
+    </thead>
+    <tbody id="creditTableBody">
+      <tr style="background-color:#C2E2C2;">
+        <td>基礎課程</td><td id="req-basic"></td><td id="done-basic"></td><td id="remain-basic"></td>
+      </tr>
+      <tr style="background-color:#C2E2C2;">
+        <td>系必修</td><td id="req-major"></td><td id="done-major"></td><td id="remain-major"></td>
+      </tr>
+      <tr style="background-color:#C2E2C2;">
+        <td>組必修</td><td id="req-group"></td><td id="done-group"></td><td id="remain-group"></td>
+      </tr>
+      <tr style="background-color:#C2E2C2;">
+        <td>系內選修</td><td id="req-elective"></td><td id="done-elective"></td><td id="remain-elective"></td>
+      </tr>
+      <tr style="background-color:#C2E2C2;">
+        <td>系外選修</td><td id="req-outside"></td><td id="done-outside"></td><td id="remain-outside"></td>
+      </tr>
+      <tr style="background-color:#C2E2C2;">
+        <td>通識</td><td id="req-general"></td><td id="done-general"></td><td id="remain-general"></td>
+      </tr>
+      <tr style="background-color:#A7D7A7; font-weight:bold;">
+        <td>總學分</td><td id="totalRequired"></td><td id="totalCompleted"></td><td id="totalRemaining"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 備註 -->
+  <div style="color:red; font-size:14px; margin-top:15px;">
+    * 如遇問題，請詢問助教/註冊組！  </div>
+</div>
+
+<script>
+  // 導覽列連結
+  document.getElementById('homeLink').href = withParams('login.html');
+  document.getElementById('introLink').href = withParams('page2.html');
+  document.getElementById('requiredLink').href = withParams('required.html');
+  document.getElementById('courseLink').href = withParams('course.html');
+  document.getElementById('creditsLink').href = withParams('credits.html');
+
+  document.getElementById('studentId').textContent = studentId;
+
+  const requiredCredits = {
+    基礎課程: 18,
+    系必修: 42,
+    組必修: 12,
+    系內選修: 20,
+    系外選修: 10,
+    通識: 14
+  };
+
+  function getCredits(name) {
+    let total = 0;
+    const requiredData = JSON.parse(localStorage.getItem(`required_${studentId}`) || '[]');
+    requiredData.forEach(c => { if (c.category === name) total += parseInt(c.credits) || 0; });
+
+    const electiveData = JSON.parse(localStorage.getItem(`elective_courses_${studentId}`) || '[]');
+    electiveData.forEach(c => { if (c.category === name) total += parseInt(c.credits) || 0; });
+
+    if (name === "通識") {
+      const generalData = JSON.parse(localStorage.getItem(`general_${studentId}`) || '[]');
+      total += generalData.reduce((sum, c) => sum + (parseInt(c.credits) || 0), 0);
+    }
+    return total;
+  }
+
+  function fillRow(name, reqId, doneId, remainId) {
+    const req = requiredCredits[name];
+    const done = getCredits(name);
+    const remain = Math.max(req - done, 0);
+    document.getElementById(reqId).textContent = req;
+    document.getElementById(doneId).textContent = done;
+    document.getElementById(remainId).textContent = remain;
+    return { req, done, remain };
+  }
+
+  let totalReq = 0, totalDone = 0, totalRemain = 0;
+  const rows = [
+    ["基礎課程", "req-basic", "done-basic", "remain-basic"],
+    ["系必修", "req-major", "done-major", "remain-major"],
+    ["組必修", "req-group", "done-group", "remain-group"],
+    ["系內選修", "req-elective", "done-elective", "remain-elective"],
+    ["系外選修", "req-outside", "done-outside", "remain-outside"],
+    ["通識", "req-general", "done-general", "remain-general"]
+  ];
+
+  rows.forEach(r => {
+    const res = fillRow(...r);
+    totalReq += res.req;
+    totalDone += res.done;
+    totalRemain += res.remain;
+  });
+
+  document.getElementById("totalRequired").textContent = totalReq;
+  document.getElementById("totalCompleted").textContent = totalDone;
+  document.getElementById("totalRemaining").textContent = totalRemain;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+主畫面 login.html
+系統介紹 page2.html
+必修科目表required.html
+課程輸入course.html
+    必修 required-course.html
+    選修 elective-course.html
+    通識 general-course.html
+學分計算credits.html

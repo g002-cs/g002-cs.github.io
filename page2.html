@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>系統介紹</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    /* 上方選單 */
+
+
+ .navbar {
+      background-color: #A7D7A7; /* 淡綠色 */
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    .navbar img {
+      width: 40px;
+      height: 40px;
+      margin-right: 20px;
+    }
+    .navbar a {
+      text-decoration: none;
+      color: black;
+      margin-right: 100px;
+      font-weight: bold;
+    }
+ .navbar a:last-child {
+    margin-right: 1; /* 最後一個不需要右邊距 */
+  }
+  .navbar a:first-child {
+    margin-right:50px; 
+  }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 上方選單 -->
+  <div class="navbar">
+    <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink" href="#">系統介紹</a>
+    <a id="requiredLink" href="#">必修科目表</a>
+    <a id="courseLink" href="#">課程輸入</a>
+    <a id="creditsLink" href="#">學分計算</a>
+  </div>
+
+  <!-- 內容 -->
+  <div class="content">
+    <p>（以圖文說明系統如何操作）</p>
+    <div id="userInfo"></div>
+  </div>
+
+  <script>
+    // 1. 取得 URL 參數
+    const params = new URLSearchParams(window.location.search);
+    const studentId = params.get('studentId');
+    const group = params.get('group');
+
+/* // 2. 顯示用戶資料（可刪）
+    if (studentId && group) {
+      document.getElementById('userInfo').innerHTML =
+        `<p>學號：${studentId}</p><p>組別：${group}</p>`;
+    } */
+
+    // 3. 動態設定所有連結帶參數
+    function withParams(page) {
+      return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}`;
+    }
+
+    document.getElementById('homeLink').href = withParams('login.html');
+    document.getElementById('introLink').href = withParams('page2.html'); // 本頁
+    document.getElementById('requiredLink').href = withParams('required.html');
+    document.getElementById('courseLink').href = withParams('course.html');
+    document.getElementById('creditsLink').href = withParams('credits.html');
+  </script>
+
+</body>
+</html>
