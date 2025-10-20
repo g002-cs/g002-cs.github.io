@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>必修科目表</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    /* 上方選單 */
+    .navbar {
+      background-color: #98B1E0;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    .navbar img {
+      width: 40px;
+      height: 40px;
+      margin-right: 20px;
+    }
+    .navbar a {
+      text-decoration: none;
+      color: black;
+      margin-right: 100px;
+      font-weight: bold;
+    }
+    .navbar a:first-child {
+      margin-right: 50px;
+    }
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 24px;
+    }
+    #requiredImage img {
+      max-width: 70%;
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 上方選單 -->
+  <div class="navbar">
+    <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink" href="#">系統介紹</a>
+    <a id="requiredLink" href="#">必修科目表</a>
+    <a id="courseLink" href="#">課程輸入</a>
+    <a id="creditsLink" href="#">學分計算</a>
+  </div>
+
+  <!-- 內容 -->
+  <div class="content">
+    <div id="userInfo"></div>
+    <div id="requiredImage"></div>
+  </div>
+
+  <script>
+    // 1. 取得 URL 參數
+    const params = new URLSearchParams(window.location.search);
+    const studentId = params.get('studentId');
+    const group = params.get('group');
+    const year = params.get('year');
+
+
+    // 3. 動態設定所有連結帶參數
+    function withParams(page) {
+      return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}&year=${encodeURIComponent(year)}`;
+    }
+
+    document.getElementById('homeLink').href = withParams('login.html');
+    document.getElementById('introLink').href = withParams('page2.html'); 
+    document.getElementById('requiredLink').href = withParams('required.html');
+    document.getElementById('courseLink').href = withParams('course.html');
+    document.getElementById('creditsLink').href = withParams('credits.html');
+
+    // 4. 根據學年度顯示對應圖片
+    const imageContainer = document.getElementById('requiredImage');
+    if (year && year !== "適用學年必修科目表") {
+      // 取學年度前三碼作檔名，如 110必修科目表.png
+      const img = document.createElement('img');
+      img.src = `${year.slice(0,3)}必修科目表.png`;
+      img.alt = `${year}必修科目表`;
+      imageContainer.appendChild(img);
+    } else {
+      imageContainer.innerHTML = "<p>請選擇學年度以顯示必修科目表。</p>";
+    }
+  </script>
+
+</body>
+</html>
