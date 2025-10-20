@@ -10,7 +10,7 @@
     }
     /* 上方選單 */
     .navbar {
-      background-color: #A7D7A7; /* 淡綠色 */
+      background-color: #98B1E0;
       display: flex;
       align-items: center;
       padding: 10px 20px;
@@ -43,7 +43,7 @@
     /* 左側箭頭 */
     .left-arrow {
       display: inline-block;
-      background-color: #A7D7A7;
+      background-color: #98B1E0;
       padding: 15px 25px;
       clip-path: polygon(0 50%, 20% 0, 100% 0, 100% 100%, 20% 100%);
       font-size: 18px;
@@ -63,7 +63,7 @@
       width: 200px;
       padding: 20px;
       margin: 15px 0;
-      background-color: #A7D7A7;
+      background-color: #98B1E0;
       border: none;
       border-radius: 5px;
       font-size: 22px;
@@ -71,7 +71,7 @@
       transition: background-color 0.3s;
     }
     .course-button:hover {
-      background-color: #90c790;
+      background-color: #98B1E0;
     }
   </style>
 </head>
@@ -101,11 +101,13 @@
     const params = new URLSearchParams(window.location.search);
     const studentId = params.get('studentId');
     const group = params.get('group');
+    const year = params.get('year');
 
     // 動態帶參數
     function withParams(page) {
-      return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}`;
+      return `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}&year=${encodeURIComponent(year)}`;
     }
+
 
     document.getElementById('homeLink').href = withParams('login.html');
     document.getElementById('introLink').href = withParams('page2.html');

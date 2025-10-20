@@ -5,27 +5,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>登入 - 學分計算系統</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #login-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+      gap: 20px;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+
+
+    input, select, button {
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 210px;
+      box-sizing: border-box;
+    }
+    /* 學號輸入框：自動轉大寫 */
+    #studentId {
+      text-transform: uppercase;
+    }
+
+
+    #select {
+  margin-bottom: 15px; /* 原本由 gap 控制，現在手動貼近 */
+}
+    button {
+      background-color: #98B1E0;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #7DA6D1;
+    }
+  </style>
 </head>
 <body>
 
-  <header id=header>
-    
-    <div id="headers">學&nbsp&nbsp&nbsp  分&nbsp&nbsp&nbsp  計&nbsp&nbsp&nbsp  算 &nbsp&nbsp&nbsp 系&nbsp&nbsp&nbsp  統</div>
-
+  <header id="header">
+    <div id="headers">學&nbsp;&nbsp;&nbsp;分&nbsp;&nbsp;&nbsp;計&nbsp;&nbsp;&nbsp;算&nbsp;&nbsp;&nbsp;系&nbsp;&nbsp;&nbsp;統</div>
   </header>
 
   <section id="login-page">
     <h2>登入學號</h2>
-    <label for="studentId" >學號</label>
+
     <input type="text" id="studentId" placeholder="輸入學號" />
+   
 
+    <select id="select">
+      <option>組別</option>
+      <option>行銷與數位經營組</option>
+      <option>服務創新與創業組</option>
+      <option>尚未分組</option>
+    </select>
 
-<select id="select">
-    <option>組別</option>
-    <option>行銷與數位經營組</option>
-    <option>服務創新與創業組</option>
-    <option>尚未分組</option>
- </select>
+    <select id="yearSelect">
+      <option>適用學年必修科目表</option>
+      <option>110學年度</option>
+      <option>111學年度</option>
+      <option>112學年度</option>
+      <option>113學年度</option>
+      <option>114學年度</option>
+    </select>
 
     <button id="loginBtn">登入</button>
   </section>
@@ -34,24 +83,36 @@
     document.getElementById("loginBtn").addEventListener("click", () => {
       const studentId = document.getElementById("studentId").value.trim();
       const group = document.getElementById("select").value;
+      const year = document.getElementById("yearSelect").value;
 
       if (studentId === "") {
         alert("請輸入學號！");
         return;
       }
+
+      const hasLowercase = /[a-z]/.test(studentId);
+      if (hasLowercase) {
+        alert("英文請輸入大寫");
+        return;
+      }
+
       if (group === "組別") {
         alert("請選擇組別！");
         return;
       }
 
-      // 跳轉並帶學號與組別參數
+      if (year === "適用學年必修科目表") {
+        alert("請選擇適用學年必修科目表！");
+        return;
+      }
+
       const params = new URLSearchParams({
         studentId: studentId,
-        group: group
+        group: group,
+        year: year
       });
       window.location.href = `page2.html?${params.toString()}`;
     });
-
   </script>
 </body>
 </html>
