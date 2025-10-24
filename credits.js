@@ -3,12 +3,13 @@
 document.getElementById('studentIdDisplay').textContent = studentId;	// 顯示學號
 
 const requiredCredits = {						// 固定
-  基礎課程: 18,
-  系必修: 42,
+  基礎課程: 16,
+  系必修: 56,
   組必修: 12,
   系內選修: 20,
-  系外選修: 10,
-  通識: 14
+  系外選修: 12,
+  通識: 12
+
 };
 
 let totalReq=0,totalDone=0,totalRemain=0;				
@@ -31,6 +32,7 @@ rows.forEach(r=>{							// 各類型學分計算
 document.getElementById("totalRequired" ).textContent = totalReq;	// 總學分計算
 document.getElementById("totalCompleted").textContent = totalDone;
 document.getElementById("totalRemaining").textContent = totalRemain;
+checkGeneralFields();
 
 // 函數定義 ===============================================================================================================
 
@@ -80,4 +82,23 @@ function viewCourse(page,type){				// 頁面跳轉
   page=withParams(page);
   const sep=page.includes('?')?'&':'?';
   window.location.href=`${page}${sep}tab=${type}`;
+}
+
+function checkGeneralFields() {				// 檢查通識三類別
+  const data = JSON.parse(localStorage.getItem(`general_courses_${studentId}`) || '[]');
+  
+  let hasHumanities = false;
+  let hasSocial = false;
+  let hasNature = false;
+
+  data.forEach(c => {
+    if (c.name.startsWith('[人文]')) hasHumanities = true;
+    else if (c.name.startsWith('[社會]')) hasSocial = true;
+    else if (c.name.startsWith('[自然]')) hasNature = true;
+  });
+
+  const warningContainer = document.getElementById('warningArea');
+  if (!hasHumanities || !hasSocial || !hasNature) 
+    warningContainer.append('* 通識三領域尚未各完成一門！');
+
 }

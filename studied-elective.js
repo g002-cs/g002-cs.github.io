@@ -122,7 +122,7 @@ async function loadCSV() {		// 讀取CSV資料
   const lines = text.split('\n').slice(2);
   courses = lines.map(line => {
     const [CNO, SNO, CTITLE, CID, CREDIT] = line.split(',');
-    if (SNO === 'SD') 
+    if (SNO === 'SD' || (group === '行銷與數位經營組' && SNO === 'RG-S') || (group === '服務創新與創業組' && SNO === 'RG-M'))
       return { name: CTITLE, credits: Number(CREDIT) };
     return null;
   }).filter(Boolean);
