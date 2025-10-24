@@ -31,8 +31,10 @@ rows.forEach(r=>{							// 各類型學分計算
 
 document.getElementById("totalRequired" ).textContent = totalReq;	// 總學分計算
 document.getElementById("totalCompleted").textContent = totalDone;
-document.getElementById("totalRemaining").textContent = totalRemain;
-checkGeneralFields();
+const totalRemainCell = document.getElementById("totalRemaining");
+totalRemainCell.textContent = totalRemain;
+totalRemainCell.style.color = totalRemain > 0 ? 'red' : 'black';	
+checkWarning();
 
 // 函數定義 ===============================================================================================================
 
@@ -73,7 +75,9 @@ function fillRow(name, reqId, doneId, remainId) {	// 表格
 
   document.getElementById(reqId   ).textContent = req;
   document.getElementById(doneId  ).textContent = done;
-  document.getElementById(remainId).textContent = remain;
+  const remainCell = document.getElementById(remainId);
+  remainCell.textContent = remain;
+  remainCell.style.color = remain > 0 ? '#FF0000' : 'black';
 
   return {req,done,remain};
 }
@@ -84,7 +88,10 @@ function viewCourse(page,type){				// 頁面跳轉
   window.location.href=`${page}${sep}tab=${type}`;
 }
 
-function checkGeneralFields() {				// 檢查通識三類別
+function checkWarning() {				
+  const warningContainer = document.getElementById('warningArea');
+
+  // 檢查通識三類別
   const data = JSON.parse(localStorage.getItem(`general_courses_${studentId}`) || '[]');
   
   let hasHumanities = false;
@@ -96,9 +103,25 @@ function checkGeneralFields() {				// 檢查通識三類別
     else if (c.name.startsWith('[社會]')) hasSocial = true;
     else if (c.name.startsWith('[自然]')) hasNature = true;
   });
-
-  const warningContainer = document.getElementById('warningArea');
-  if (!hasHumanities || !hasSocial || !hasNature) 
+  if (!hasHumanities || !hasSocial || !hasNature) {
     warningContainer.append('* 通識三領域尚未各完成一門！');
+    warningContainer.append(document.createElement('br'));
+  }
 
+  // 檢查0學分必修
+  const requiredBasics = ["國防", "大一體育上", "大一體育下", "大二體育上", "大二體育下"];
+  const doneBasics = JSON.parse(localStorage.getItem(`required_${studentId}`) || '[]')
+                        .filter(c => c.category === "基礎課程")
+                        .map(c => c.name);
+
+  const missing = requiredBasics.some(course => !doneBasics.includes(course));
+
+  if (missing) {
+    warningContainer.append('* 尚有0學分必修基礎課程未修！');
+    warningContainer.append(document.createElement('br'));
+  }
+
+  // 一般警語
+  warningContainer.append('* 如遇問題，請詢問助教/註冊組！'); 
+  warningContainer.append(document.createElement('br'));
 }
