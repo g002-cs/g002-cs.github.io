@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課程輸入-必修</title>
+  <link rel="stylesheet" href="navbar.css" />					<!--導覽列共通樣式-->
+  <link rel="stylesheet" href="studied-required.css" />				<!--頁面樣式(本頁面專屬)-->
+</head>
+
+<body>
+  <div class="navbar">
+    <a id="homeLink"    href="#"               ><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink"   href="#"               >系統介紹</a>
+    <a id="courseLink"  href="#"               >必修科目表</a>
+    <a id="studiedLink" href="#" class="active">課程輸入</a>
+    <a id="creditsLink" href="#"               >學分計算</a>
+  </div>
+
+  <div class="student-info">
+    學號：<span id="studentIdDisplay"></span>
+  </div>
+
+  <div class="filters">
+    <label for="typeSelect">必修/選修/通識：
+      <select id="typeSelect">
+        <option value="必修" selected>必修</option>
+        <option value="選修"         >選修</option>
+        <option value="通識"         >通識</option>
+      </select>
+    </label>
+
+    <label for="categorySelect">科目分類：
+      <select id="categorySelect">
+        <option value="基礎課程" selected>基礎課程</option>
+        <option value="系必修"           >系必修</option>
+        <option value="組必修"           >組必修</option>
+      </select>
+    </label>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:  80px;">已修</th>
+        <th style="width: 200px;">課程名稱</th>
+        <th style="width:  80px;">學分數</th>
+      </tr>
+    </thead>
+    <tbody id="courseTableBody"></tbody>
+  </table>
+
+  <script src="url_param.js"></script>						<!--導覽列共通動作-->
+  <script src="studied-required.js"></script>					<!--頁面動作-->
+</body>
+
+</html>

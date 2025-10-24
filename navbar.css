@@ -1,0 +1,43 @@
+.navbar {
+  background-color: #8FACCC;
+  display: flex;
+  align-items: stretch; 
+  padding: 0;           
+  height: 60px;
+}
+
+
+.navbar img {					/* 首頁圖案 */
+  width: 40px;
+  height: 40px;
+  margin-right: 0px;
+  vertical-align: middle;
+}
+
+
+.navbar a {					/* 一般樣式 */
+  display: flex;
+  align-items: center;        
+  justify-content: center;  
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 0 35px;            
+  height: 100%;
+}
+
+
+.navbar a:nth-of-type(1) {			/* 第一個項目(首頁) */
+  padding: 0 10px;          			/* 設定寬度較窄 */
+}
+
+
+.navbar a:hover {				/* 滑鼠移到按鈕上時的樣式 */
+  background-color: #A4BFF2;
+}
+
+
+.navbar a.active {				/* 當前頁面的樣式 */
+  color: white;
+}

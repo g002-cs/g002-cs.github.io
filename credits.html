@@ -1,230 +1,76 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>學分計算</title>
-<style>
-  body { margin: 0; font-family: Arial, sans-serif; background-color: #fff; }
-.navbar {
-  background-color: #98B1E0;
-  display: flex;
-  align-items: stretch; /* 🔸重點：讓每個 a 撐滿整個導覽列高度 */
-  padding: 0;           /* 移除上下邊距 */
-  height: 60px;         /* 固定高度，可自行調整 */
-}
-
-.navbar img {
-  width: 40px;
-  height: 40px;
-  margin-right: 20px;
-  vertical-align: middle;
-}
-
-/* 🔹 導覽列連結統一設定 */
-.navbar a {
-  display: flex;
-  align-items: center;        /* 垂直置中 */
-  justify-content: center;    /* 水平置中 */
-  text-decoration: none;
-  color: black;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 0 35px;            /* 🔸這裡控制欄寬，比文字略寬 */
-  height: 100%;               /* 撐滿導覽列上下 */
-  transition: background-color 0.3s;
-}
-
-.navbar a:nth-of-type(1) {
-  padding: 0 10px;          /* 比其他項目窄一點 */
-}
-
-/* 🔹 滑過時顏色 */
-.navbar a:hover {
-  background-color: #A4BFF2;
-}
-
-/* 🔹 當前頁面整塊變色（上下貼齊）*/
-.navbar a.active {
-  background-color: #1284EB;
-  color: white;
-}
-
-  .left-arrow {
-    display: inline-block; background-color: #98B1E0; padding: 15px 25px;
-    clip-path: polygon(0 50%, 20% 0, 100% 0, 100% 100%, 20% 100%);
-    font-size: 18px; color: black; margin: 20px 0 20px 40px;
-  }
-
-  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-  th { border-bottom: 1px solid #ccc; padding: 15px; text-align: center; font-size: 18px; background-color:#1284EB; color:white; }
-  td { border-bottom: 1px solid #ccc; padding: 15px; text-align: center; font-size: 16px; }
-  button {
-    background-color: #98B1E0; border: none; padding: 6px 12px; font-size: 15px; border-radius: 6px; cursor: pointer;
-  }
-  button:hover { background-color: #7DA6D1; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>學分計算</title>
+  <link rel="stylesheet" href="navbar.css" />					<!--導覽列共通樣式-->
+  <link rel="stylesheet" href="credits.css" />					<!--頁面樣式(本頁面專屬)-->
 </head>
+
 <body>
-
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const studentId = params.get('studentId');
-  const group = params.get('group');
-  const year = params.get('year');
-
-  const allowedGroups = ['行銷與數位經營組','服務創新與創業組','尚未分組'];
-  if (!studentId || !allowedGroups.includes(group)) {
-    window.location.href = 'login.html';
-  }
-
-  function withParams(page, extra = "") {
-    let url = `${page}?studentId=${encodeURIComponent(studentId)}&group=${encodeURIComponent(group)}&year=${encodeURIComponent(year)}`;
-    if (extra) url += extra;
-    return url;
-  }
-</script>
-
-<div class="navbar">
-  <a id="homeLink" href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
-  <a id="introLink" href="#">系統介紹</a>
-  <a id="requiredLink" href="#">必修科目表</a>
-  <a id="courseLink" href="#">課程輸入</a>
-  <a id="creditsLink" href="#" class="active">學分計算</a>
-</div>
-
-<div class="left-arrow">學分計算</div>
-
-<div class="content" style="margin:20px 40px;">
-  <div style="margin-bottom: 20px; font-size:18px;">
-    學號：<span id="studentIdDisplay" style="font-weight:bold;">SXXXXXXXX</span>
+  <div class="navbar">
+    <a id="homeLink"    href="#"               ><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink"   href="#"               >系統介紹</a>
+    <a id="courseLink"  href="#"               >必修科目表</a>
+    <a id="studiedLink" href="#"               >課程輸入</a>
+    <a id="creditsLink" href="#" class="active">學分計算</a>
   </div>
 
-  <table>
-    <thead> 
-      <tr style="color:white;">
-        <th>科目類別</th>
-        <th>應修學分</th>
-        <th>已修學分</th>
-        <th>未修學分</th>
-        <th>檢視</th>
-      </tr>
-    </thead>
-    <tbody id="creditTableBody">
-      <tr style="background-color:#ABC7FC; border: 2px #FFFFFF solid;">
-        <td>基礎課程</td><td id="req-basic"></td><td id="done-basic"></td><td id="remain-basic"></td>
-        <td><button onclick="viewCourse('required-course.html', '基礎課程')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#ABC7FC; border: 2px  #FFFFFF solid;">
-        <td>系必修</td><td id="req-major"></td><td id="done-major"></td><td id="remain-major"></td>
-        <td><button onclick="viewCourse('required-course.html', '系必修')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#ABC7FC; border: 2px  #FFFFFF solid;">
-        <td>組必修</td><td id="req-group"></td><td id="done-group"></td><td id="remain-group"></td>
-        <td><button onclick="viewCourse('required-course.html', '組必修')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#ABC7FC; border: 2px  #FFFFFF solid;">
-        <td>系內選修</td><td id="req-elective"></td><td id="done-elective"></td><td id="remain-elective"></td>
-        <td><button onclick="viewCourse('elective-course.html', '系內選修')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#ABC7FC; border: 2px  #FFFFFF solid;">
-        <td>系外選修</td><td id="req-outside"></td><td id="done-outside"></td><td id="remain-outside"></td>
-        <td><button onclick="viewCourse('elective-course.html', '系外選修')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#ABC7FC; border: 2px  #FFFFFF solid;">
-        <td>通識</td><td id="req-general"></td><td id="done-general"></td><td id="remain-general"></td>
-        <td><button onclick="viewCourse('general-course.html', '')">檢視</button></td>
-      </tr>
-      <tr style="background-color:#98B1E0; font-weight:bold;">
-        <td>總學分</td><td id="totalRequired"></td><td id="totalCompleted"></td><td id="totalRemaining"></td>
-        <td>-</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div style="color:red; font-size:14px; margin-top:15px;">
-    * 如遇問題，請詢問助教/註冊組！
+  <div class="student-info">
+    學號：<span id="studentIdDisplay"></span>
   </div>
-</div>
 
-<script>
-  document.getElementById('homeLink').href = withParams('login.html');
-  document.getElementById('introLink').href = withParams('page2.html');
-  document.getElementById('requiredLink').href = withParams('required.html');
-  document.getElementById('courseLink').href = withParams('course.html');
-  document.getElementById('creditsLink').href = withParams('credits.html');
+  <div class="content" style="margin:20px 40px;">
+    <table>
+      <thead> 
+        <tr style="color:white;">
+          <th>科目類別</th>
+          <th>應修學分</th>
+          <th>已修學分</th>
+          <th>未修學分</th>
+          <th>檢視</th>
+       </tr>
+      </thead>
+      <tbody id="creditTableBody">
+        <tr style="background-color:#A8CAFF; border: 2px #FFFFFF solid;">
+          <td>基礎課程</td><td id="req-basic"></td><td id="done-basic"></td><td id="remain-basic"></td>
+          <td><button onclick="viewCourse('studied-required.html', '基礎課程')">檢視</button></td>
+        </tr>
+        <tr style="background-color:#A8CAFF; border: 2px  #FFFFFF solid;">
+          <td>系必修</td><td id="req-major"></td><td id="done-major"></td><td id="remain-major"></td>
+          <td><button onclick="viewCourse('studied-required.html', '系必修')">檢視</button></td>
+        </tr>
+        <tr style="background-color:#A8CAFF; border: 2px  #FFFFFF solid;">
+          <td>組必修</td><td id="req-group"></td><td id="done-group"></td><td id="remain-group"></td>
+          <td><button onclick="viewCourse('studied-required.html', '組必修')">檢視</button></td> 
+        </tr>
+        <tr style="background-color:#A8CAFF; border: 2px  #FFFFFF solid;">
+          <td>系內選修</td><td id="req-elective"></td><td id="done-elective"></td><td id="remain-elective"></td>
+          <td><button onclick="viewCourse('studied-elective.html', '系內選修')">檢視</button></td>
+        </tr>
+        <tr style="background-color:#A8CAFF; border: 2px  #FFFFFF solid;">
+          <td>系外選修</td><td id="req-outside"></td><td id="done-outside"></td><td id="remain-outside"></td>
+          <td><button onclick="viewCourse('studied-elective.html', '系外選修')">檢視</button></td>
+        </tr>
+        <tr style="background-color:#A8CAFF; border: 2px  #FFFFFF solid;">
+          <td>通識</td><td id="req-general"></td><td id="done-general"></td><td id="remain-general"></td>
+          <td><button onclick="viewCourse('studied-general.html', '')">檢視</button></td>
+        </tr>
+        <tr style="background-color:#8FACCC; font-weight:bold;">
+          <td>總學分</td><td id="totalRequired"></td><td id="totalCompleted"></td><td id="totalRemaining"></td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
 
-  document.getElementById('studentIdDisplay').textContent = studentId;
+    <div style="color:red; font-size:16px; margin-top:15px;">
+      * 如遇問題，請詢問助教/註冊組！
+    </div>
+  </div>
 
-  const requiredCredits = {
-    基礎課程: 18,
-    系必修: 42,
-    組必修: 12,
-    系內選修: 20,
-    系外選修: 10,
-    通識: 14
-  };
-
-  // 🔹 取得必修學分
-  function getRequiredCredits(category) {
-    const data = JSON.parse(localStorage.getItem(`required_${studentId}`) || '[]');
-    return data.filter(c => c.category === category).reduce((sum,c)=>sum+(Number(c.credits)||0),0);
-  }
-
-  function getElectiveCredits(type) {
-    const data = JSON.parse(localStorage.getItem(`elective_${type}_${studentId}`) || '[]');
-    return data.reduce((sum, c) => sum + (parseInt(c.credits)||0), 0);
-  }
-  function getSDCredits() {
-    const data = JSON.parse(localStorage.getItem(`sd_courses_${studentId}`) || '[]');
-    return data.reduce((sum, c) => sum + (parseInt(c.credits)||0), 0);
-  }
-  function getGeneralCredits() {
-    const data = JSON.parse(localStorage.getItem(`general_courses_${studentId}`) || '[]');
-    return data.reduce((sum, c) => sum + (parseInt(c.credits)||0), 0);
-  }
-
-  function fillRow(name, reqId, doneId, remainId) {
-    const req = requiredCredits[name];
-    let done = 0;
-    if (name==='基礎課程' || name==='系必修' || name==='組必修') done = getRequiredCredits(name);
-    else if (name==='系內選修') done = getElectiveCredits("internal")+getSDCredits();
-    else if (name==='系外選修') done = getElectiveCredits("external");
-    else if (name==='通識') done = getGeneralCredits();
-    const remain = Math.max(req-done,0);
-    document.getElementById(reqId).textContent=req;
-    document.getElementById(doneId).textContent=done;
-    document.getElementById(remainId).textContent=remain;
-    return {req,done,remain};
-  }
-
-  let totalReq=0,totalDone=0,totalRemain=0;
-  const rows=[
-    ["基礎課程","req-basic","done-basic","remain-basic"],
-    ["系必修","req-major","done-major","remain-major"],
-    ["組必修","req-group","done-group","remain-group"],
-    ["系內選修","req-elective","done-elective","remain-elective"],
-    ["系外選修","req-outside","done-outside","remain-outside"],
-    ["通識","req-general","done-general","remain-general"]
-  ];
-
-  rows.forEach(r=>{
-    const res=fillRow(...r);
-    totalReq+=res.req;
-    totalDone+=res.done;
-    totalRemain+=res.remain;
-  });
-
-  document.getElementById("totalRequired").textContent=totalReq;
-  document.getElementById("totalCompleted").textContent=totalDone;
-  document.getElementById("totalRemaining").textContent=totalRemain;
-
-  function viewCourse(page,type){
-    page=withParams(page);
-    const sep=page.includes('?')?'&':'?';
-    window.location.href=`${page}${sep}tab=${type}`;
-  }
-</script>
-
-</body>
+  <script src="url_param.js"></script>						<!--導覽列共通動作-->
+  <script src="credits.js"></script>						<!--頁面動作-->
+</body>	
 </html>

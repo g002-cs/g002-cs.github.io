@@ -1,0 +1,80 @@
+body {					
+  font-family: "Noto Sans TC", 
+               "Microsoft JhengHei",
+               sans-serif;
+  margin: 0;				
+  background: #FFFFFF;
+  color: #333;
+}
+
+
+.student-info { 
+  margin: 20px 40px; 
+  font-size: 16px; 
+  color: #333; 
+}
+
+
+.filters { 
+  margin: 20px 40px;  
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+}
+
+
+select { 
+  padding: 10px 15px; 
+  background-color: #98B1E0; 
+  border: none; 
+  border-radius: 5px; 
+  font-size: 16px; 
+}
+
+
+table { 
+  margin: 20px 40px; 
+  width: 100%; 
+  border-collapse: collapse; 
+}
+
+
+th, td { 
+  border-bottom: 1px solid #ccc; 
+  padding: 15px; 
+  text-align: center; 
+  font-size: 16px; 
+}
+  
+
+th { 
+  background-color: #f0f0f0; 
+}
+
+
+input[type="checkbox"] {
+  appearance: none; 
+  width: 24px; 
+  height: 24px; 
+  border: 2px solid #98B1E0; 
+  border-radius: 6px;
+  background-color: #fff; 
+  cursor: pointer; 
+  position: relative;
+}
+
+
+input[type="checkbox"]:checked { 
+  background-color: #98B1E0; 
+  border-color: #98B1E0; 
+}
+  
+
+input[type="checkbox"]:checked::after {
+  content: '✔'; 
+  position: absolute; 
+  top: -2px; 
+  left: 4px; 
+  font-size: 18px; 
+  color: #fff;
+}
