@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">								<!--繁體中文-->
+
+<head>
+  <meta charset="UTF-8" />							<!--編碼-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 	<!--行動裝置瀏覽-->
+  <title>登入 - 學分計算系統</title>						<!--網頁標題-->
+  <link rel="stylesheet" href="login.css" />					<!--頁面樣式(本頁面專屬)-->
+</head>	
+
+<body>
+  <header id="header">
+    <div id="header-text">學分計算系統</div>
+  </header>
+
+  <section id="login-page">
+    <h2>
+      登入系統
+    </h2>
+
+    <input type="text" id="studentId" placeholder="輸入學號" />			<!--輸入框(含提示字)-->
+
+    <select id="select">
+      <option>組別</option>
+      <option>行銷與數位經營組</option>
+      <option>服務創新與創業組</option>
+      <option>尚未分組</option>
+    </select>
+
+    <select id="yearSelect">
+      <option>適用學年必修科目表</option>
+      <option>110學年度</option>
+      <option>111學年度</option>
+      <option>112學年度</option>
+      <option>113學年度</option>
+      <option>114學年度</option>
+    </select>
+
+    <button id="loginBtn">
+      登入
+    </button>
+  </section>
+
+  <script src="login.js"></script>						<!--點擊登入時的動作-->
+</body>
+
+</html>

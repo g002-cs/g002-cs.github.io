@@ -1,0 +1,14 @@
+body {					
+  font-family: "Noto Sans TC", 
+               "Microsoft JhengHei",
+               sans-serif;
+  margin: 0;				
+  background: #FFFFFF;
+  color: #333;
+}
+
+.content {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 24px;
+}

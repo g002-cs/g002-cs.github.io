@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>課程輸入</title>
+  <link rel="stylesheet" href="navbar.css" />					<!--導覽列共通樣式-->
+  <link rel="stylesheet" href="studied.css" />					<!--頁面樣式(本頁面專屬)-->
+</head>
+
+<body>
+  <div class="navbar">
+    <a id="homeLink"    href="#"               ><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="introLink"   href="#"               >系統介紹</a>
+    <a id="courseLink"  href="#"               >必修科目表</a>
+    <a id="studiedLink" href="#" class="active">課程輸入</a>
+    <a id="creditsLink" href="#"               >學分計算</a>
+  </div>
+
+  <div class="button-container">
+    <button class="course-button" id="requiredCourseBtn">必修</button>
+    <button class="course-button" id="electiveCourseBtn">選修</button>
+    <button class="course-button" id="generalCourseBtn" >通識</button>
+  </div>
+
+  <script src="url_param.js"></script>						<!--導覽列共通動作-->
+  <script src="studied.js"></script>						<!--頁面動作-->
+</body>
+
+</html>

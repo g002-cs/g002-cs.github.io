@@ -1,0 +1,124 @@
+body {					
+  font-family: "Noto Sans TC", 
+               "Microsoft JhengHei",
+               sans-serif;
+  margin: 0;				
+  background: #FFFFFF;
+  color: #333;
+}
+
+
+.student-info { 
+  margin: 20px 40px; 
+  font-size: 16px; 
+  color: #333; 
+}
+
+
+.filters { 
+  margin: 20px 40px;  
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+}
+
+
+select { 
+  padding: 10px 15px; 
+  background-color: #98B1E0; 
+  border: none; 
+  border-radius: 5px; 
+  font-size: 16px; 
+}
+
+
+.main-area { 
+  margin: 20px 40px;  
+  display: flex; 
+  justify-content: space-between; 
+  gap: 30px; 
+}
+
+
+.course-list { 
+  width: 70%; 
+  background-color: #f5f5f5; 
+  padding: 20px; 
+  border-radius: 8px; 
+  overflow-y: scroll;
+  height: 350px;
+}
+
+
+.course-list h3 { 
+  margin-bottom: 10px; 
+}
+
+
+.input-area { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 15px; 
+}
+
+
+input { 
+  padding: 10px; 
+  font-size: 16px; 
+  border: none;  
+  background-color: #ddd; 
+  border-radius: 5px; 
+}
+  
+
+button { 
+  background-color: #98B1E0; 
+  border: none; 
+  padding: 10px 20px; 
+  font-size: 16px; 
+  cursor: pointer; 
+  border-radius: 5px; 
+}
+
+
+button:hover {
+  background-color: #7EA5D6; 
+}
+
+
+#generalCourseList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 			/* 刪除按鈕靠右 */
+  padding: 5px 0;
+}
+
+
+#generalCourseList li .course-name {
+  flex: 1;                  	/* 課程名稱撐滿剩餘空間 */
+  text-align: left;		/* 課程名稱靠左 */
+}
+
+
+#generalCourseList li .course-credits {
+  text-align: right;        	/* 學分靠右 */
+  width: 120px;              	/* 固定寬度避免跳動 */
+  margin-right: 50%;
+
+}
+
+
+#generalCourseList li button {
+  background-color: #ff4d4d; 
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+
+#generalCourseList li button:hover {
+  background-color: #e60000; 
+}
