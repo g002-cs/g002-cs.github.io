@@ -1,6 +1,7 @@
 // 一次性動作區 =============================================================================================================
 
 document.getElementById('studentIdDisplay').textContent = studentId;	// 顯示學號
+const warningContainer = document.getElementById('warningArea');
 
 const requiredCredits = {						// 固定
   基礎課程: 16,
@@ -87,48 +88,73 @@ async function renderTable(rows) {
 function getRequiredCredits(category) {		// 必修學分計算
   return JSON.parse(localStorage.getItem(`required_${studentId}`) || '[]')
          .filter(c => c.category === category && c.name !== "勞作教育")
-         .map(c => Number(c.credits) || 0);
+         .map(c => Number(c.credits));
 }
 
 function getElectiveCredits(type) {		// 選修學分計算 (自行輸入)
   return JSON.parse(localStorage.getItem(`elective_${type}_${studentId}`) || '[]')
-         .map(c => Number(c.credits) || 0);
+         .map(c => Number(c.credits));
 }
 
 function getSDCredits() {			// 選修學分計算 (表格勾選)
   return JSON.parse(localStorage.getItem(`sd_courses_${studentId}`) || '[]')
-         .map(c => Number(c.credits) || 0);
+         .map(c => Number(c.credits));
 }
 
 function getLaborCredits() {			// 選修學分計算 (表格勾選)
   return JSON.parse(localStorage.getItem(`required_${studentId}`) || '[]')
          .filter(c => c.category === "基礎課程" && c.name === "勞作教育")
-         .map(c => Number(c.credits) || 0);
+         .map(c => Number(c.credits));
 }
 
 function getGeneralCredits() {			// 通識學分計算
   return JSON.parse(localStorage.getItem(`general_courses_${studentId}`) || '[]')
-         .map(c => Number(c.credits) || 0);
+         .map(c => Number(c.credits));
 }
 
 function fillRow(name, reqId, doneId, remainId, remainAfterId, overflow_in) {		// 表格
   const req = requiredCredits[name];
 
-  let done = 0;
-  if (name==='基礎課程' || name==='系必修' || name==='組必修') 
-    done = getRequiredCredits(name);
-  else if (name==='系內選修') 
-    done = getElectiveCredits('internal').concat(getSDCredits());
-  else if (name==='系外選修') 
-    done = getElectiveCredits("external").concat(getLaborCredits());
-  else if (name==='通識') 
-    done = getGeneralCredits();
-  done = done.reduce((sum, c) => sum + c, 0);
-  doneAfter = done + overflow_in;
+  let doneList = 0;
+  if (name === '基礎課程' || name === '系必修' || name === '組必修') 
+    doneList = getRequiredCredits(name);
+  else if (name === '系內選修') 
+    doneList = getElectiveCredits('internal').concat(getSDCredits());
+  else if (name === '系外選修') 
+    doneList = getElectiveCredits("external").concat(getLaborCredits());
+  else if (name=== '通識') 
+    doneList = getGeneralCredits();
 
+  const done = doneList.reduce((sum, c) => sum + c, 0);
   const remain = Math.max(req - done, 0);
+  const doneAfter = done + overflow_in;
   const remainAfter = Math.max(req - doneAfter, 0);
-  const overflow = Math.max(doneAfter - req, 0);
+
+  // 折抵計算 // 警告：僅適用於組必修均為 3 學分之狀況
+  let overflow = 0;
+  if (name === '組必修') {
+    overflow = Math.max(doneAfter - req, 0);
+  }
+  else if (name === '系內選修' || name==='通識') {
+    if (doneAfter < req) {
+      overflow = 0;
+    }
+    else {
+      if (doneList.some(c => c > 10)) {
+        warningContainer.append('* 請確認10學分以上課程的存在性，目前不納入學分折抵計算！');
+        warningContainer.append(document.createElement('br'));
+      }
+
+      const countArray = Array(10).fill(0);
+      doneList.forEach(c => { if (c <= 10) countArray[c-1]++; });
+      countArray[3-1] += Math.floor(overflow_in / 3);
+
+      overflow = maxScoreUnderTarget(countArray, doneAfter - req);
+    }
+  }
+  else {
+    overflow = Math.max(doneAfter - req, 0); // 無用
+  } 
 
   document.getElementById(reqId ).textContent = req;
   document.getElementById(doneId).textContent = done;
@@ -141,7 +167,6 @@ function fillRow(name, reqId, doneId, remainId, remainAfterId, overflow_in) {		/
   remainAfterCell.textContent = remainAfter;
   remainAfterCell.style.color = remainAfter > 0 ? '#FF0000' : 'black';
 
-
   return {req,done,remain,remainAfter,overflow};
 }
 
@@ -151,9 +176,28 @@ function viewCourse(page,type){				// 頁面跳轉
   window.location.href=`${page}${sep}tab=${type}`;
 }
 
-function checkWarning() {				
-  const warningContainer = document.getElementById('warningArea');
+function maxScoreUnderTarget(courses, target) {
+  const scores = [1,2,3,4,5,6,7,8,9,10];  // 支援 1~10 學分
+  const dp = Array(target + 1).fill(0);
 
+  for (let i = 0; i < scores.length; i++) {
+    const score = scores[i];
+    const count = courses[i] || 0;
+    let k = 1, remaining = count;
+    while (remaining > 0) {
+      const use = Math.min(k, remaining);
+      const weight = score * use;
+      for (let j = target; j >= weight; j--) {
+        dp[j] = Math.max(dp[j], dp[j - weight] + weight);
+      }
+      remaining -= use;
+      k *= 2;
+    }
+  }
+  return dp[target];
+}
+
+function checkWarning() {				
   // 檢查通識三類別
   const data = JSON.parse(localStorage.getItem(`general_courses_${studentId}`) || '[]');
   
@@ -185,7 +229,7 @@ function checkWarning() {
   }
 
   // 一般警語
-  warningContainer.append('* 系統學分折抵以學分為單位計算！'); 
+  warningContainer.append('* 本系統以課程為單位折抵學分，故可能有不完全折抵之狀況！'); 
   warningContainer.append(document.createElement('br'));
   warningContainer.append('* 如有學分相關問題，請詢問助教/註冊組！'); 
   warningContainer.append(document.createElement('br'));
