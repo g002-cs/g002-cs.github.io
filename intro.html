@@ -5,24 +5,91 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>系統介紹</title>
-  <link rel="stylesheet" href="navbar.css" />					<!--導覽列共通樣式-->
-  <link rel="stylesheet" href="intro.css" />					<!--頁面樣式(本頁面專屬)-->
+  <link rel="stylesheet" href="navbar.css" />          <!--導覽列共通樣式-->
+  <link rel="stylesheet" href="intro.css" />           <!--頁面樣式(本頁面專屬)-->
+  <style>
+    .content {
+      text-align: center;
+    }
+
+    .content img {
+      width: 90%;
+      margin: 20px 0;
+    }
+  </style>
 </head>
 
 <body>
   <div class="navbar">
-    <a id="homeLink"    href="#"               ><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
+    <a id="homeLink"    href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home"></a>
     <a id="introLink"   href="#" class="active">系統介紹</a>
-    <a id="courseLink"  href="#"               >必修科目表</a>
-    <a id="studiedLink" href="#"               >課程輸入</a>
-    <a id="creditsLink" href="#"               >學分計算</a>
+    <a id="courseLink"  href="#">必修科目表</a>
+    <a id="studiedLink" href="#">課程輸入</a>
+    <a id="creditsLink" href="#">學分計算</a>
   </div>
   
   <div class="content">
-    <p>（以圖文說明系統如何操作）</p>
+    <img src="1.png"  alt="系統介紹圖1">
+    <img src="2.png"  alt="系統介紹圖2">
+    <img src="3.png"  alt="系統介紹圖3">
+    <img src="4.png"  alt="系統介紹圖4">
+    <img src="5.png"  alt="系統介紹圖5">
+    <img src="6.png"  alt="系統介紹圖6">
+    <img src="7.png"  alt="系統介紹圖7">
+    <img src="8.png"  alt="系統介紹圖8">
+    <img src="9.png"  alt="系統介紹圖9">
+    <img src="10.png" alt="系統介紹圖10">
+    <img src="11.png" alt="系統介紹圖11">
+    <img src="12.png" alt="系統介紹圖12">
+    <img src="13.png" alt="系統介紹圖13">
+    <img src="14.png" alt="系統介紹圖14">
   </div>
 
-  <script src="url_param.js"></script>						<!--導覽列共通動作-->
+  <script src="url_param.js"></script>          <!--導覽列共通動作-->
 </body>
+
+
+<!-- (1) 加入這行在 body 最後 -->
+<button id="topBtn">TOP</button>
+
+<!-- (2) 加入 CSS -->
+<style>
+#topBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background-color: #8FACCC;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s, transform 0.2s;
+}
+#topBtn:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+</style>
+
+<!-- (3) 加入 JS -->
+<script>
+const topBtn = document.getElementById("topBtn");
+window.onscroll = function() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    topBtn.style.display = "block";
+  } else {
+    topBtn.style.display = "none";
+  }
+};
+topBtn.addEventListener("click", function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
 
 </html>
